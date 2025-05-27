@@ -1,13 +1,10 @@
 import './App.css'
-import UriSharing from './components/uriSharing/uriSharing'
-import UriGetting from './components/UriGetting/UriGetting'
+import UriActions from './components/UriActions/UriActions'
 function App() {
 
   return (
     <>
-      <UriSharing />
-      <UriGetting />
-
+      <UriActions />
     </>
   )
 }

@@ -25,7 +25,7 @@ export default function UriGetting() {
     return (
         <div className="uriLogicSection">
             <h3 className="uriLogicSection_title">Get a URI</h3>
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', gap: '10px' }}>
                 {[...Array(6)].map((_, index) => (
                     <TextField
                         key={index}
