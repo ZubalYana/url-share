@@ -36,7 +36,6 @@ export default function UriSharing() {
                     backgroundColor: '#3255D5',
                     color: '#fff',
                     borderRadius: '10px',
-                    textTransform: 'none',
                     marginTop: '20px',
                     width: '270px',
                     height: '55px',
