@@ -17,3 +17,7 @@ a,
 li {
     font-family: MuseoModerno;
 }
+
+body {
+  overflow: hidden;
+}
