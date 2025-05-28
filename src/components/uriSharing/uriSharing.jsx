@@ -26,6 +26,7 @@ export default function UriSharing() {
                     },
                     '& .MuiInputLabel-root': {
                         fontSize: '16px',
+                        fontFamily: 'MuseoModerno',
                     },
                 }}
             />

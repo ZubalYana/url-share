@@ -37,6 +37,7 @@ export default function UriGetting() {
                                 fontSize: '24px',
                                 width: '40px',
                                 maxHeight: '56px',
+                                fontFamily: 'fredoka',
                             },
                         }}
                         onChange={(e) => handleChange(e, index)}
