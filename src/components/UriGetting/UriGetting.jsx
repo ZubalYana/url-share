@@ -2,6 +2,7 @@ import React, { useRef , useState } from 'react';
 import './UriGetting.css';
 import { Button, TextField } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function UriGetting() {
     const inputsRef = useRef([]);
@@ -34,14 +35,14 @@ export default function UriGetting() {
             setUri(generatedUri);
             setIsUri(true);
         } else {
-            alert('Please enter 6 characters');
+            toast.error('Please enter 6 characters');
         }
     } else {
         try {
             await navigator.clipboard.writeText(uri);
-            alert('URI copied to clipboard!');
+            toast.success('URI copied to clipboard!');
         } catch (err) {
-            alert('Failed to copy URI!');
+            toast.error('Failed to copy URI!');
         }
     }
 };
@@ -120,6 +121,19 @@ export default function UriGetting() {
             >
                 {isUri ? 'COPY THE URI' : 'GET THE URI'}
             </Button>
+
+          <ToastContainer
+  position="top-right"
+  autoClose={3000}
+  hideProgressBar={false}
+  newestOnTop={false}
+  closeOnClick
+  rtl={false}
+  pauseOnFocusLoss
+  draggable
+  pauseOnHover
+  theme="colored"іі
+/>
         </div>
     );
 }
