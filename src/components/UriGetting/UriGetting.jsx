@@ -43,6 +43,7 @@ export default function UriGetting() {
                         onChange={(e) => handleChange(e, index)}
                         onKeyDown={(e) => handleKeyDown(e, index)}
                         variant="outlined"
+                        placeholder='X'
                         sx={{
                             '& .MuiOutlinedInput-root': {
                                 backgroundColor: '#f9f9f9',
@@ -57,6 +58,10 @@ export default function UriGetting() {
                                     borderColor: '#673ab7',
                                 },
                             },
+                            '& input::placeholder': {
+                                 color: '#1E1E1E',
+                                 opacity: 1,
+                                },
                         }}
                     />
                 ))}
