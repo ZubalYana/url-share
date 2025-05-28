@@ -1,9 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef , useState } from 'react';
 import './UriGetting.css';
 import { Button, TextField } from '@mui/material';
 
 export default function UriGetting() {
     const inputsRef = useRef([]);
+    const [uri, setUri] = useState('');
+    const [isUri, setIsUri] = useState(false);
 
     const handleChange = (e, index) => {
         const value = e.target.value;
@@ -21,6 +23,28 @@ export default function UriGetting() {
             inputsRef.current[index - 1].focus();
         }
     };
+
+
+    const handleButtonClick = async () => {
+    if (!isUri) {
+        const code = inputsRef.current.map(input => input.value).join('');
+        if (code.length === 6) {
+            const generatedUri = `http://localhost:5173/`;  
+            setUri(generatedUri);
+            setIsUri(true);
+        } else {
+            alert('Please enter 6 characters');
+        }
+    } else {
+        try {
+            await navigator.clipboard.writeText(uri);
+            alert('URI copied to clipboard!');
+        } catch (err) {
+            alert('Failed to copy URI!');
+        }
+    }
+};
+
 
     return (
         <div className="uriLogicSection">
@@ -66,7 +90,16 @@ export default function UriGetting() {
                     />
                 ))}
             </div>
-            <Button
+
+             {isUri && (
+                <div style={{ paddingTop: '15px', fontWeight: '600', fontSize: '16px', color: '#333' }}>
+                    Your URI: <span style={{ color: '#3255D5' }}>{uri}</span>
+                </div>
+            )}
+
+
+           <Button
+                onClick={handleButtonClick}
                 variant="contained"
                 fullWidth
                 sx={{
@@ -84,7 +117,7 @@ export default function UriGetting() {
                     },
                 }}
             >
-                Get a URI
+                {isUri ? 'COPY THE URI' : 'GET THE URI'}
             </Button>
         </div>
     );
