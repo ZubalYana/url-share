@@ -9,7 +9,6 @@ export default function UriSharing() {
     const [code, setCode] = useState('');
     const [uri, setUri] = useState('');
 
-    // 🔍 Функція перевірки, чи є рядок дійсним URI
     const isValidUri = (string) => {
         try {
             new URL(string);
