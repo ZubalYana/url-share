@@ -1,9 +1,21 @@
-import React from 'react'
+import React , { useState } from 'react'
 import './UriSharing.css'
 import { TextField, Button } from '@mui/material'
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default function UriSharing() {
+
+
+    const [isCode, setIsCode] = useState(false);
+    const [code, setCode] = useState('');
+
+    const generateCode = () => {
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        setCode(code);
+        setIsCode(true);
+        toast.success('Code generated!');
+    }
     return (
         <div className='uriLogicSection'>
             <h3 className='uriLogicSection_title'>Share your URI</h3>
@@ -31,6 +43,14 @@ export default function UriSharing() {
                     },
                 }}
             />
+
+               {isCode && (
+                <div style={{ paddingTop: '15px', fontWeight: '600', fontSize: '16px', color: '#333' }}>
+                    Your generated code: <span style={{ color: '#3255D5' }}>{code}</span>
+                </div>
+            )}
+
+
             <Button
                 variant="contained"
                 fullWidth
@@ -48,9 +68,23 @@ export default function UriSharing() {
                         backgroundColor: '#2C48AA',
                     },
                 }}
+                onClick={generateCode}
             >
-                Get a code
+               {isCode ? 'COPY CODE' : 'GET A CODE'}
             </Button>
+
+                <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+              theme="colored"іі
+            />
         </div>
     )
 }
