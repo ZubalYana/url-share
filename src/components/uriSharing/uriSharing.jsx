@@ -48,6 +48,13 @@ export default function UriSharing() {
         }
     };
 
+    const handleReset = () => {
+        setCode('');
+        setUri('');
+        setIsCode(false);
+        toast.success('Code reset!');
+    };
+
     return (
         <div className="uriLogicSection">
             <h3 className="uriLogicSection_title">Share your URI</h3>
@@ -86,27 +93,46 @@ export default function UriSharing() {
                 </div>
             )}
 
+
+ <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
             <Button
                 variant="contained"
                 fullWidth
                 sx={{
-                    backgroundColor: '#3255D5',
-                    color: '#fff',
-                    borderRadius: '10px',
-                    marginTop: '20px',
-                    width: '270px',
-                    height: '55px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    '&:hover': {
-                        backgroundColor: '#2C48AA',
-                    },
-                }}
+            backgroundColor: '#3255D5',
+            color: '#fff',
+            borderRadius: '10px',
+            width: '180px',
+            height: '55px',
+            fontSize: '16px',
+            fontWeight: '600',
+            textTransform: 'uppercase',
+            '&:hover': {
+              backgroundColor: '#2C48AA',
+            },
+          }}
                 onClick={handleButtonClick}
             >
                 {isCode ? 'COPY CODE' : 'GET A CODE'}
             </Button>
+
+            <Button
+                      onClick={handleReset}
+                      variant="outlined"
+                      color="secondary"
+                      sx={{
+                        borderRadius: '10px',
+                        width: '80px',
+                        height: '55px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                      }}
+                    >
+                      RESET
+                    </Button>
+
+            </div>
 
             <ToastContainer
                 position="top-right"
