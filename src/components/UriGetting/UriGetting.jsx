@@ -48,6 +48,16 @@ export default function UriGetting() {
 };
 
 
+  const handleReset = () => {
+    inputsRef.current.forEach(input => {
+      if (input) input.value = '';
+    });
+    setUri('');
+    setIsUri(false);
+    inputsRef.current[0]?.focus();
+    toast.success('URI reset!');
+  };
+
     return (
         <div className="uriLogicSection">
             <h3 className="uriLogicSection_title">Get a URI</h3>
@@ -100,28 +110,43 @@ export default function UriGetting() {
             )}
 
 
-           <Button
-                onClick={handleButtonClick}
-                variant="contained"
-                fullWidth
-                sx={{
-                    backgroundColor: '#3255D5',
-                    color: '#fff',
-                    borderRadius: '10px',
-                    marginTop: '20px',
-                    width: '270px',
-                    height: '55px',
-                    fontSize: '16px',
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    '&:hover': {
-                        backgroundColor: '#2C48AA',
-                    },
-                }}
-            >
-                {isUri ? 'COPY THE URI' : 'GET THE URI'}
-            </Button>
+         <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+        <Button
+          onClick={handleButtonClick}
+          variant="contained"
+          sx={{
+            backgroundColor: '#3255D5',
+            color: '#fff',
+            borderRadius: '10px',
+            width: '180px',
+            height: '55px',
+            fontSize: '16px',
+            fontWeight: '600',
+            textTransform: 'uppercase',
+            '&:hover': {
+              backgroundColor: '#2C48AA',
+            },
+          }}
+        >
+          {isUri ? 'COPY THE URI' : 'GET THE URI'}
+        </Button>
 
+        <Button
+          onClick={handleReset}
+          variant="outlined"
+          color="secondary"
+          sx={{
+            borderRadius: '10px',
+            width: '80px',
+            height: '55px',
+            fontSize: '16px',
+            fontWeight: '600',
+            textTransform: 'uppercase',
+          }}
+        >
+          RESET
+        </Button>
+      </div>
           <ToastContainer
   position="top-right"
   autoClose={3000}
