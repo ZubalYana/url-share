@@ -9,9 +9,24 @@ export default function UriSharing() {
     const [code, setCode] = useState('');
     const [uri, setUri] = useState('');
 
+    // 🔍 Функція перевірки, чи є рядок дійсним URI
+    const isValidUri = (string) => {
+        try {
+            new URL(string);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    };
+
     const generateCode = () => {
         if (!uri.trim()) {
             toast.error('Please enter a URI before generating a code.');
+            return;
+        }
+
+        if (!isValidUri(uri.trim())) {
+            toast.error('Invalid URI. Please enter a valid URI (e.g., https://).');
             return;
         }
 
@@ -94,18 +109,18 @@ export default function UriSharing() {
                 {isCode ? 'COPY CODE' : 'GET A CODE'}
             </Button>
 
-             <ToastContainer
-             position="top-right"
-             autoClose={3000}
-             hideProgressBar={false}
-             newestOnTop={false}
-             closeOnClick
-             rtl={false}
-             pauseOnFocusLoss
-             draggable
-             pauseOnHover
-             theme="colored"
-           />
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+            />
         </div>
     );
 }
