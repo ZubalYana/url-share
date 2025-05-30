@@ -5,13 +5,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import CodeInput from '../MiniCompUriActions/UriGettingComp/CodeInput/CodeInput';
 import UriDisplay from '../MiniCompUriActions/UriGettingComp/UriDisplay/UriDisplay';
 import ActionButtons from '../MiniCompUriActions/UriGettingComp/ActionButtons/ActionButtons';
-
+import { TextField, Button } from '@mui/material';
 
 export default function UriGetting() {
     const inputsRef = useRef([]);
     const [uri, setUri] = useState('');
     const [isUri, setIsUri] = useState(false);
     const [prevValues, setPrevValues] = useState(['', '', '', '', '', '']);
+    const [isProtected, setIsProtected] = useState(false);
+    const [pin, setPin] = useState('');
+    const [code, setCode] = useState('');
+
+    const [pinRequired, setPinRequired] = useState(false);
+const [pinInput, setPinInput] = useState('');
+const [currentCode, setCurrentCode] = useState('');
+
 
     const handleChange = (e, index) => {
         const value = e.target.value;
@@ -46,37 +54,72 @@ export default function UriGetting() {
         e.preventDefault();
     };
 
-    const handleButtonClick = async () => {
-        if (!isUri) {
-            const code = inputsRef.current.map(input => input.value).join('');
-            if (code.length === 6) {
-                try {
-                    const res = await fetch(`http://localhost:5000/api/uri/${code}`);
-                    if (!res.ok) throw new Error('Code not found');
-                    const data = await res.json();
-                    setUri(data.uri);
-                    setIsUri(true);
-                    toast.success('URI found!');
-                } catch (err) {
-                    toast.error(err.message);
+   const handleButtonClick = async () => {
+    if (!isUri) {
+        const code = inputsRef.current.map(input => input.value).join('');
+        if (code.length === 6) {
+            try {
+                const res = await fetch(`http://localhost:5000/api/uri/${code}`);
+                if (res.status === 401) {
+                    
+                    setCurrentCode(code);
+                    setPinRequired(true);
+                    toast.info('PIN is required for this code.');
+                    return;
                 }
-            } else {
-                toast.error('Please enter 6 characters');
+                if (!res.ok) throw new Error('Code not found');
+                const data = await res.json();
+                setUri(data.uri);
+                setIsUri(true);
+                toast.success('URI found!');
+            } catch (err) {
+                toast.error(err.message);
             }
         } else {
-            try {
-                await navigator.clipboard.writeText(uri);
-                toast.success('URI copied to clipboard!');
-            } catch {
-                toast.error('Failed to copy URI!');
-            }
+            toast.error('Please enter 6 characters');
         }
-    };
+    } else {
+        try {
+            await navigator.clipboard.writeText(uri);
+            toast.success('URI copied to clipboard!');
+        } catch {
+            toast.error('Failed to copy URI!');
+        }
+    }
+};
+
+
+const handlePinSubmit = async () => {
+    try {
+        const res = await fetch(`http://localhost:5000/api/uri/${currentCode}/unlock`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pin: pinInput })
+        });
+
+        if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.message);
+        }
+
+        const data = await res.json();
+        setUri(data.uri);
+        setIsUri(true);
+        setPinRequired(false);
+        toast.success('PIN accepted. URI unlocked!');
+    } catch (err) {
+        toast.error(err.message);
+    }
+};
+
 
     const handleReset = () => {
         inputsRef.current.forEach(input => input && (input.value = ''));
         setUri('');
         setIsUri(false);
+        setIsProtected(false);
+        setPin('');
+        setCode('');
         setPrevValues(['', '', '', '', '', '']);
         inputsRef.current[0]?.focus();
         toast.success('URI reset!');
@@ -91,12 +134,67 @@ export default function UriGetting() {
                 handleKeyDown={handleKeyDown}
                 handlePaste={handlePaste}
             />
+
+            {isProtected && !isUri && (
+                <div style={{ marginTop: '20px' }}>
+                    <TextField
+                        label="Enter PIN"
+                        type="password"
+                        value={pin}
+                        onChange={(e) => setPin(e.target.value)}
+                        variant="outlined"
+                        sx={{ width: '200px' }}
+                    />
+                </div>
+            )}
+
             {isUri && <UriDisplay uri={uri} />}
+
+
+
+{pinRequired && (
+    <div style={{ marginTop: '20px' }}>
+        <input
+            type="password"
+            value={pinInput}
+            onChange={(e) => setPinInput(e.target.value)}
+            placeholder="Enter PIN"
+            style={{
+                padding: '10px',
+                fontSize: '16px',
+                borderRadius: '8px',
+                border: '1px solid #ccc',
+                marginRight: '10px',
+                width: '150px'
+            }}
+        />
+        <button
+            onClick={handlePinSubmit}
+            style={{
+                padding: '10px 15px',
+                fontSize: '16px',
+                borderRadius: '8px',
+                backgroundColor: '#3255D5',
+                color: '#fff',
+                border: 'none',
+                cursor: 'pointer'
+            }}
+        >
+            Unlock
+        </button>
+    </div>
+)}
+
+
+
+
+
             <ActionButtons
                 isUri={isUri}
                 handleButtonClick={handleButtonClick}
                 handleReset={handleReset}
             />
+
             <ToastContainer
                 position="top-right"
                 autoClose={3000}

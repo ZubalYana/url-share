@@ -33,11 +33,37 @@ app.get('/api/uri/:code', async (req, res) => {
     try {
         const entry = await UriEntry.findOne({ code: req.params.code });
         if (!entry) return res.status(404).json({ message: 'Code not found or expired.' });
+
+        if (entry.pin) {
+            return res.status(401).json({ message: 'PIN required' }); 
+        }
+
         res.json({ uri: entry.uri });
     } catch (err) {
         res.status(500).json({ message: 'Server error.' });
     }
 });
+
+
+app.post('/api/uri/:code/unlock', async (req, res) => {
+    const { pin } = req.body;
+
+    try {
+        const entry = await UriEntry.findOne({ code: req.params.code });
+        if (!entry) return res.status(404).json({ message: 'Code not found or expired.' });
+
+        if (!entry.pin) return res.status(400).json({ message: 'This code does not require a PIN.' });
+
+        if (entry.pin === pin) {
+            return res.json({ uri: entry.uri });
+        } else {
+            return res.status(403).json({ message: 'Incorrect PIN' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: 'Server error.' });
+    }
+});
+
 
 
 
