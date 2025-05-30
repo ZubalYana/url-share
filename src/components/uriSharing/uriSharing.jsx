@@ -18,7 +18,7 @@ export default function UriSharing() {
         }
     };
 
-    const generateCode = () => {
+    const generateCode = async () => {
         if (!uri.trim()) {
             toast.error('Please enter a URI before generating a code.');
             return;
@@ -32,8 +32,20 @@ export default function UriSharing() {
         const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
         setCode(generatedCode);
         setIsCode(true);
-        toast.success('Code generated!');
+
+        try {
+            const res = await fetch('http://localhost:5000/api/uri', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: generatedCode, uri }),
+            });
+            if (!res.ok) throw new Error('Failed to store URI');
+            toast.success('Code generated and stored!');
+        } catch (err) {
+            toast.error(err.message);
+        }
     };
+
 
     const copyCodeToClipboard = () => {
         navigator.clipboard.writeText(code);
@@ -94,43 +106,43 @@ export default function UriSharing() {
             )}
 
 
- <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-            <Button
-                variant="contained"
-                fullWidth
-                sx={{
-            backgroundColor: '#3255D5',
-            color: '#fff',
-            borderRadius: '10px',
-            width: '180px',
-            height: '55px',
-            fontSize: '16px',
-            fontWeight: '600',
-            textTransform: 'uppercase',
-            '&:hover': {
-              backgroundColor: '#2C48AA',
-            },
-          }}
-                onClick={handleButtonClick}
-            >
-                {isCode ? 'COPY CODE' : 'GET A CODE'}
-            </Button>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <Button
+                    variant="contained"
+                    fullWidth
+                    sx={{
+                        backgroundColor: '#3255D5',
+                        color: '#fff',
+                        borderRadius: '10px',
+                        width: '180px',
+                        height: '55px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                        '&:hover': {
+                            backgroundColor: '#2C48AA',
+                        },
+                    }}
+                    onClick={handleButtonClick}
+                >
+                    {isCode ? 'COPY CODE' : 'GET A CODE'}
+                </Button>
 
-            <Button
-                      onClick={handleReset}
-                      variant="outlined"
-                      color="secondary"
-                      sx={{
+                <Button
+                    onClick={handleReset}
+                    variant="outlined"
+                    color="secondary"
+                    sx={{
                         borderRadius: '10px',
                         width: '80px',
                         height: '55px',
                         fontSize: '16px',
                         fontWeight: '600',
                         textTransform: 'uppercase',
-                      }}
-                    >
-                      RESET
-                    </Button>
+                    }}
+                >
+                    RESET
+                </Button>
 
             </div>
 

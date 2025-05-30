@@ -1,4 +1,4 @@
-import React, { useRef , useState } from 'react';
+import React, { useRef, useState } from 'react';
 import './UriGetting.css';
 import { Button, TextField } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
@@ -28,35 +28,43 @@ export default function UriGetting() {
 
 
     const handleButtonClick = async () => {
-    if (!isUri) {
-        const code = inputsRef.current.map(input => input.value).join('');
-        if (code.length === 6) {
-            const generatedUri = `http://localhost:5173/`;  
-            setUri(generatedUri);
-            setIsUri(true);
+        if (!isUri) {
+            const code = inputsRef.current.map(input => input.value).join('');
+            if (code.length === 6) {
+                try {
+                    const res = await fetch(`http://localhost:5000/api/uri/${code}`);
+                    if (!res.ok) throw new Error('Code not found');
+                    const data = await res.json();
+                    setUri(data.uri);
+                    setIsUri(true);
+                    toast.success('URI found!');
+                } catch (err) {
+                    toast.error(err.message);
+                }
+            } else {
+                toast.error('Please enter 6 characters');
+            }
         } else {
-            toast.error('Please enter 6 characters');
+            try {
+                await navigator.clipboard.writeText(uri);
+                toast.success('URI copied to clipboard!');
+            } catch {
+                toast.error('Failed to copy URI!');
+            }
         }
-    } else {
-        try {
-            await navigator.clipboard.writeText(uri);
-            toast.success('URI copied to clipboard!');
-        } catch (err) {
-            toast.error('Failed to copy URI!');
-        }
-    }
-};
+    };
 
 
-  const handleReset = () => {
-    inputsRef.current.forEach(input => {
-      if (input) input.value = '';
-    });
-    setUri('');
-    setIsUri(false);
-    inputsRef.current[0]?.focus();
-    toast.success('URI reset!');
-  };
+
+    const handleReset = () => {
+        inputsRef.current.forEach(input => {
+            if (input) input.value = '';
+        });
+        setUri('');
+        setIsUri(false);
+        inputsRef.current[0]?.focus();
+        toast.success('URI reset!');
+    };
 
     return (
         <div className="uriLogicSection">
@@ -95,70 +103,70 @@ export default function UriGetting() {
                                 },
                             },
                             '& input::placeholder': {
-                                 color: '#1E1E1E',
-                                 opacity: 1,
-                                },
+                                color: '#1E1E1E',
+                                opacity: 1,
+                            },
                         }}
                     />
                 ))}
             </div>
 
-             {isUri && (
+            {isUri && (
                 <div style={{ paddingTop: '15px', fontWeight: '600', fontSize: '16px', color: '#333' }}>
                     Your URI: <span style={{ color: '#3255D5' }}>{uri}</span>
                 </div>
             )}
 
 
-         <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-        <Button
-          onClick={handleButtonClick}
-          variant="contained"
-          sx={{
-            backgroundColor: '#3255D5',
-            color: '#fff',
-            borderRadius: '10px',
-            width: '180px',
-            height: '55px',
-            fontSize: '16px',
-            fontWeight: '600',
-            textTransform: 'uppercase',
-            '&:hover': {
-              backgroundColor: '#2C48AA',
-            },
-          }}
-        >
-          {isUri ? 'COPY THE URI' : 'GET THE URI'}
-        </Button>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                <Button
+                    onClick={handleButtonClick}
+                    variant="contained"
+                    sx={{
+                        backgroundColor: '#3255D5',
+                        color: '#fff',
+                        borderRadius: '10px',
+                        width: '180px',
+                        height: '55px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                        '&:hover': {
+                            backgroundColor: '#2C48AA',
+                        },
+                    }}
+                >
+                    {isUri ? 'COPY THE URI' : 'GET THE URI'}
+                </Button>
 
-        <Button
-          onClick={handleReset}
-          variant="outlined"
-          color="secondary"
-          sx={{
-            borderRadius: '10px',
-            width: '80px',
-            height: '55px',
-            fontSize: '16px',
-            fontWeight: '600',
-            textTransform: 'uppercase',
-          }}
-        >
-          RESET
-        </Button>
-      </div>
-          <ToastContainer
-  position="top-right"
-  autoClose={3000}
-  hideProgressBar={false}
-  newestOnTop={false}
-  closeOnClick
-  rtl={false}
-  pauseOnFocusLoss
-  draggable
-  pauseOnHover
-  theme="colored"іі
-/>
+                <Button
+                    onClick={handleReset}
+                    variant="outlined"
+                    color="secondary"
+                    sx={{
+                        borderRadius: '10px',
+                        width: '80px',
+                        height: '55px',
+                        fontSize: '16px',
+                        fontWeight: '600',
+                        textTransform: 'uppercase',
+                    }}
+                >
+                    RESET
+                </Button>
+            </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored" іі
+            />
         </div>
     );
 }
