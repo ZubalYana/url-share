@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import CodeInput from '../MiniCompUriActions/UriGettingComp/CodeInput/CodeInput';
 import UriDisplay from '../MiniCompUriActions/UriGettingComp/UriDisplay/UriDisplay';
 import ActionButtons from '../MiniCompUriActions/UriGettingComp/ActionButtons/ActionButtons';
-import { TextField, Button } from '@mui/material';
+import PinUnlock from '../MiniCompUriActions/UriGettingComp/PinUnlock/PinUnlock';
 
 export default function UriGetting() {
     const inputsRef = useRef([]);
@@ -143,40 +143,12 @@ const handlePinSubmit = async () => {
 
 
 {pinRequired && (
-    <div style={{ marginTop: '20px' }}>
-        <input
-            type="password"
-            value={pinInput}
-            onChange={(e) => setPinInput(e.target.value)}
-            placeholder="Enter PIN"
-            style={{
-                padding: '10px',
-                fontSize: '16px',
-                borderRadius: '8px',
-                border: '1px solid #ccc',
-                marginRight: '10px',
-                width: '150px'
-            }}
-        />
-        <button
-            onClick={handlePinSubmit}
-            style={{
-                padding: '10px 15px',
-                fontSize: '16px',
-                borderRadius: '8px',
-                backgroundColor: '#3255D5',
-                color: '#fff',
-                border: 'none',
-                cursor: 'pointer'
-            }}
-        >
-            Unlock
-        </button>
-    </div>
+    <PinUnlock
+        pinInput={pinInput}
+        setPinInput={setPinInput}
+        handlePinSubmit={handlePinSubmit}
+    />
 )}
-
-
-
 
 
             <ActionButtons
