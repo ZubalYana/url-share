@@ -2,6 +2,7 @@ import './App.css'
 import Header from './components/Header/Header'
 import UriActions from './components/BoxUriActions/UriActions/UriActions'
 import Decorations from './components/Decorations/Decorations'
+import URILoaderBlock from './components/URILoaderBlock/URILoaderBlock'
 function App() {
 
 
@@ -13,6 +14,7 @@ function App() {
 
       <Header />
 
+         <URILoaderBlock  />
 
       <UriActions />
 

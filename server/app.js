@@ -79,6 +79,20 @@ async function incrementDownloadCount() {
 }
 
 
+app.get('/api/downloads/count', async (req, res) => {
+  try {
+    let counter = await DownloadCounter.findOne();
+    if (!counter) {
+      counter = await DownloadCounter.create({ count: 0 });
+    }
+    res.json({ count: counter.count });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch count', error: err.message });
+  }
+});
+
+
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
