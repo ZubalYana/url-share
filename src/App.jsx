@@ -1,6 +1,6 @@
 import './App.css'
 import Header from './components/Header/Header'
-import UriActions from './components/UriActions/UriActions'
+import UriActions from './components/BoxUriActions/UriActions/UriActions'
 import Decorations from './components/Decorations/Decorations'
 function App() {
 
