@@ -6,6 +6,7 @@ export default function PinUnlock({ pinInput, setPinInput, handlePinSubmit }) {
             <input
                 type="password"
                 value={pinInput}
+                maxLength="4"
                 onChange={(e) => setPinInput(e.target.value)}
                 placeholder="Enter PIN"
                 style={{
