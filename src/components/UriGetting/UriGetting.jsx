@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import './UriGetting.css';
 import { Button, TextField } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
@@ -8,6 +8,7 @@ export default function UriGetting() {
     const inputsRef = useRef([]);
     const [uri, setUri] = useState('');
     const [isUri, setIsUri] = useState(false);
+    const [prevValues, setPrevValues] = useState(['', '', '', '', '', '']);
 
     const handleChange = (e, index) => {
         const value = e.target.value;
@@ -24,21 +25,34 @@ export default function UriGetting() {
         if (e.key === 'Backspace' && !e.target.value && index > 0) {
             inputsRef.current[index - 1].focus();
         }
+
+        if (e.ctrlKey && e.key === 'z') {
+            prevValues.forEach((char, i) => {
+                if (inputsRef.current[i]) {
+                    inputsRef.current[i].value = char;
+                }
+            });
+            toast.info('Undo paste');
+        }
     };
 
     const handlePaste = (e) => {
         const paste = e.clipboardData.getData('Text').toUpperCase().replace(/[^0-9A-Z]/g, '');
 
         if (paste.length === 6) {
+            const currentValues = inputsRef.current.map((input) => input.value);
+            setPrevValues(currentValues);
+
             paste.split('').forEach((char, i) => {
                 if (inputsRef.current[i]) {
                     inputsRef.current[i].value = char;
                 }
             });
-            inputsRef.current[5]?.focus(); // фокус на останнє поле
+            inputsRef.current[5]?.focus();
+            toast.success('Code pasted');
         }
 
-        e.preventDefault(); // запобігаємо вставці в одне поле
+        e.preventDefault();
     };
 
     const handleButtonClick = async () => {
@@ -74,6 +88,7 @@ export default function UriGetting() {
         });
         setUri('');
         setIsUri(false);
+        setPrevValues(['', '', '', '', '', '']);
         inputsRef.current[0]?.focus();
         toast.success('URI reset!');
     };
