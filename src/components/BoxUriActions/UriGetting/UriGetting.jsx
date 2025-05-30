@@ -2,9 +2,9 @@ import React, { useRef, useState } from 'react';
 import './UriGetting.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import CodeInput from '../MiniCompUriActions/CodeInput/CodeInput';
-import UriDisplay from '../MiniCompUriActions/UriDisplay/UriDisplay';
-import ActionButtons from '../MiniCompUriActions/ActionButtons/ActionButtons';
+import CodeInput from '../MiniCompUriActions/UriGettingComp/CodeInput/CodeInput';
+import UriDisplay from '../MiniCompUriActions/UriGettingComp/UriDisplay/UriDisplay';
+import ActionButtons from '../MiniCompUriActions/UriGettingComp/ActionButtons/ActionButtons';
 
 
 export default function UriGetting() {
