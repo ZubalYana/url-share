@@ -15,7 +15,7 @@ export default function Header() {
         <p className='text-center text-[20px] font-regular'>A simple <span className='text-[#1E47DA] cursor-pointer'> solution </span>  to a common problem — <span className='text-[#1E47DA] cursor-pointer'>easily</span> share URLs <br /> and links across devices instantly.</p>
       </div>
 
-      <div className='w-[25%] flex justify-end justify-center gap-[10px]'>
+      <div className='w-[25%] flex justify-center gap-[10px]'>
 
 
         <img className='cursor-pointer w-[30px] h-[30px]' src="/avatar.svg" alt="avatar.svg" />
