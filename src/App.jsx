@@ -4,6 +4,8 @@ import UriActions from './components/BoxUriActions/UriActions/UriActions'
 import Decorations from './components/Decorations/Decorations'
 function App() {
 
+
+
     // git merge main в гілці щоб працював tailwind в інших гілках 
 
   return (
@@ -11,9 +13,11 @@ function App() {
 
       <Header />
 
+
       <UriActions />
 
       <Decorations />
+
     </>
   )
 }

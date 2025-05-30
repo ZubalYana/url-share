@@ -5,6 +5,7 @@ const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 5000;
 const UriEntry = require('./models/UriEntry');
+const DownloadCounter = require('./models/DownloadCounter');
 
 app.use(cors());
 app.use(express.json());
@@ -22,6 +23,8 @@ app.post('/api/uri', async (req, res) => {
 
     try {
         await UriEntry.create({ code, uri, pin: pin || null });
+
+          await incrementDownloadCount();
         res.status(201).json({ message: 'Entry saved.' });
     } catch (err) {
         res.status(500).json({ message: 'Failed to save URI.', error: err.message });
@@ -65,6 +68,15 @@ app.post('/api/uri/:code/unlock', async (req, res) => {
 });
 
 
+async function incrementDownloadCount() {
+  const counter = await DownloadCounter.findOne();
+  if (!counter) {
+    await DownloadCounter.create({ count: 1 });
+  } else {
+    counter.count += 1;
+    await counter.save();
+  }
+}
 
 
 app.listen(PORT, () => {
