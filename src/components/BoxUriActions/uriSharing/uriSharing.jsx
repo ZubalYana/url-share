@@ -1,13 +1,13 @@
 import React, { useState, useRef } from 'react';
 import './UriSharing.css';
-import {
-    TextField,
-    Button,
-    Checkbox,
-    FormControlLabel
-} from '@mui/material';
+import { Checkbox, FormControlLabel } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
+import UriInput from '../MiniCompUriActions/UriSharingComp/UriInput/UriInput';
+import PinInput from '../MiniCompUriActions/UriSharingComp/PinInput/PinInput';
+import CodeDisplay from '../MiniCompUriActions/UriSharingComp/CodeDisplay/CodeDisplay';
+import ActionButtons from '../MiniCompUriActions/UriSharingComp/ActionButtons/ActionButtons';
 
 export default function UriSharing() {
     const [isCode, setIsCode] = useState(false);
@@ -31,10 +31,7 @@ export default function UriSharing() {
         const newDigits = [...pinDigits];
         newDigits[index] = val;
         setPinDigits(newDigits);
-
-        if (val && index < 3) {
-            inputsRef.current[index + 1]?.focus();
-        }
+        if (val && index < 3) inputsRef.current[index + 1]?.focus();
     };
 
     const handleKeyDown = (e, index) => {
@@ -46,34 +43,19 @@ export default function UriSharing() {
     const handlePaste = (e) => {
         const pasted = e.clipboardData.getData('Text').replace(/\D/g, '').slice(0, 4);
         const newDigits = Array(4).fill('');
-        for (let i = 0; i < pasted.length; i++) {
-            newDigits[i] = pasted[i];
-        }
+        for (let i = 0; i < pasted.length; i++) newDigits[i] = pasted[i];
         setPinDigits(newDigits);
         pasted.split('').forEach((char, i) => {
-            if (inputsRef.current[i]) {
-                inputsRef.current[i].value = char;
-            }
+            if (inputsRef.current[i]) inputsRef.current[i].value = char;
         });
         inputsRef.current[pasted.length - 1]?.focus();
         e.preventDefault();
     };
 
     const generateCode = async () => {
-        if (!uri.trim()) {
-            toast.error('Please enter a URI before generating a code.');
-            return;
-        }
-
-        if (!isValidUri(uri.trim())) {
-            toast.error('Invalid URI. Please enter a valid URI (e.g., https://)');
-            return;
-        }
-
-        if (usePin && pinDigits.some(d => d === '')) {
-            toast.error('PIN-code must be exactly 4 digits.');
-            return;
-        }
+        if (!uri.trim()) return toast.error('Please enter a URI before generating a code.');
+        if (!isValidUri(uri.trim())) return toast.error('Invalid URI. Please enter a valid URI (e.g., https://)');
+        if (usePin && pinDigits.some(d => d === '')) return toast.error('PIN-code must be exactly 4 digits.');
 
         const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
         setCode(generatedCode);
@@ -83,11 +65,7 @@ export default function UriSharing() {
             const res = await fetch('http://localhost:5000/api/uri', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    code: generatedCode,
-                    uri,
-                    pin: usePin ? pinDigits.join('') : null
-                }),
+                body: JSON.stringify({ code: generatedCode, uri, pin: usePin ? pinDigits.join('') : null }),
             });
             if (!res.ok) throw new Error('Failed to store URI');
             toast.success('Code generated and stored!');
@@ -102,11 +80,8 @@ export default function UriSharing() {
     };
 
     const handleButtonClick = () => {
-        if (isCode) {
-            copyCodeToClipboard();
-        } else {
-            generateCode();
-        }
+        if (isCode) copyCodeToClipboard();
+        else generateCode();
     };
 
     const handleReset = () => {
@@ -122,128 +97,31 @@ export default function UriSharing() {
         <div className="uriLogicSection">
             <h3 className="uriLogicSection_title">Share your URI</h3>
 
-            <TextField
-                label="Enter a URI to share..."
-                variant="outlined"
-                value={uri}
-                onChange={(e) => setUri(e.target.value)}
-                fullWidth
-                sx={{
-                    backgroundColor: '#f9f9f9',
-                    borderRadius: '8px',
-                    marginBottom: '20px',
-                    '& .MuiOutlinedInput-root': {
-                        '& fieldset': { borderColor: '#aaa' },
-                        '&:hover fieldset': { borderColor: '#888' },
-                        '&.Mui-focused fieldset': { borderColor: '#673ab7' },
-                    },
-                    '& .MuiInputLabel-root': {
-                        fontSize: '16px',
-                        fontFamily: 'MuseoModerno',
-                    },
-                }}
-            />
+            <UriInput uri={uri} setUri={setUri} />
 
             <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={usePin}
-                        onChange={(e) => setUsePin(e.target.checked)}
-                        color="primary"
-                    />
-                }
+                control={<Checkbox checked={usePin} onChange={(e) => setUsePin(e.target.checked)} color="primary" />}
                 label="Protect with PIN-code"
             />
 
             {usePin && (
-                <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
-                    {[...Array(4)].map((_, index) => (
-                        <TextField
-                            key={index}
-                            inputRef={(el) => (inputsRef.current[index] = el)}
-                            inputProps={{
-                                maxLength: 1,
-                                style: {
-                                    textAlign: 'center',
-                                    fontSize: '24px',
-                                    width: '40px',
-                                    maxHeight: '56px',
-                                    fontFamily: 'fredoka',
-                                },
-                            }}
-                            onChange={(e) => handleChange(e, index)}
-                            onKeyDown={(e) => handleKeyDown(e, index)}
-                            onPaste={index === 0 ? handlePaste : undefined}
-                            variant="outlined"
-                            placeholder='X'
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    backgroundColor: '#f9f9f9',
-                                    borderRadius: '8px',
-                                    '& fieldset': {
-                                        borderColor: '#aaa',
-                                    },
-                                    '&:hover fieldset': {
-                                        borderColor: '#888',
-                                    },
-                                    '&.Mui-focused fieldset': {
-                                        borderColor: '#673ab7',
-                                    },
-                                },
-                                '& input::placeholder': {
-                                    color: '#1E1E1E',
-                                    opacity: 1,
-                                },
-                            }}
-                        />
-                    ))}
-                </div>
+                <PinInput
+                    pinDigits={pinDigits}
+                    setPinDigits={setPinDigits}
+                    inputsRef={inputsRef}
+                    handleChange={handleChange}
+                    handleKeyDown={handleKeyDown}
+                    handlePaste={handlePaste}
+                />
             )}
 
-            {isCode && (
-                <div style={{ fontWeight: '600', fontSize: '16px', color: '#333' }}>
-                    Your generated code: <span style={{ color: '#3255D5' }}>{code}</span>
-                </div>
-            )}
+            {isCode && <CodeDisplay code={code} />}
 
-            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                <Button
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                        backgroundColor: '#3255D5',
-                        color: '#fff',
-                        borderRadius: '10px',
-                        width: '180px',
-                        height: '55px',
-                        fontSize: '16px',
-                        fontWeight: '600',
-                        textTransform: 'uppercase',
-                        '&:hover': {
-                            backgroundColor: '#2C48AA',
-                        },
-                    }}
-                    onClick={handleButtonClick}
-                >
-                    {isCode ? 'COPY CODE' : 'GET A CODE'}
-                </Button>
-
-                <Button
-                    onClick={handleReset}
-                    variant="outlined"
-                    color="secondary"
-                    sx={{
-                        borderRadius: '10px',
-                        width: '80px',
-                        height: '55px',
-                        fontSize: '16px',
-                        fontWeight: '600',
-                        textTransform: 'uppercase',
-                    }}
-                >
-                    RESET
-                </Button>
-            </div>
+            <ActionButtons
+                isCode={isCode}
+                handleButtonClick={handleButtonClick}
+                handleReset={handleReset}
+            />
 
             <ToastContainer position="top-right" autoClose={3000} />
         </div>
