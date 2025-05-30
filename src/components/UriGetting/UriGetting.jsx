@@ -26,6 +26,20 @@ export default function UriGetting() {
         }
     };
 
+    const handlePaste = (e) => {
+        const paste = e.clipboardData.getData('Text').toUpperCase().replace(/[^0-9A-Z]/g, '');
+
+        if (paste.length === 6) {
+            paste.split('').forEach((char, i) => {
+                if (inputsRef.current[i]) {
+                    inputsRef.current[i].value = char;
+                }
+            });
+            inputsRef.current[5]?.focus(); // фокус на останнє поле
+        }
+
+        e.preventDefault(); // запобігаємо вставці в одне поле
+    };
 
     const handleButtonClick = async () => {
         if (!isUri) {
@@ -53,8 +67,6 @@ export default function UriGetting() {
             }
         }
     };
-
-
 
     const handleReset = () => {
         inputsRef.current.forEach(input => {
@@ -86,6 +98,7 @@ export default function UriGetting() {
                         }}
                         onChange={(e) => handleChange(e, index)}
                         onKeyDown={(e) => handleKeyDown(e, index)}
+                        onPaste={index === 0 ? handlePaste : undefined}
                         variant="outlined"
                         placeholder='X'
                         sx={{
@@ -116,7 +129,6 @@ export default function UriGetting() {
                     Your URI: <span style={{ color: '#3255D5' }}>{uri}</span>
                 </div>
             )}
-
 
             <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
                 <Button
@@ -165,7 +177,7 @@ export default function UriGetting() {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover
-                theme="colored" іі
+                theme="colored"
             />
         </div>
     );
