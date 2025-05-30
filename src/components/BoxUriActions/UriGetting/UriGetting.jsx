@@ -12,7 +12,6 @@ export default function UriGetting() {
     const [uri, setUri] = useState('');
     const [isUri, setIsUri] = useState(false);
     const [prevValues, setPrevValues] = useState(['', '', '', '', '', '']);
-    const [isProtected, setIsProtected] = useState(false);
     const [pin, setPin] = useState('');
     const [code, setCode] = useState('');
 
@@ -117,7 +116,6 @@ const handlePinSubmit = async () => {
     inputsRef.current.forEach(input => input && (input.value = ''));
     setUri('');
     setIsUri(false);
-    setIsProtected(false);
     setPin('');
     setCode('');
     setPinInput('');
@@ -139,19 +137,7 @@ const handlePinSubmit = async () => {
                 handlePaste={handlePaste}
             />
 
-            {isProtected && !isUri && (
-                <div style={{ marginTop: '20px' }}>
-                    <TextField
-                        label="Enter PIN"
-                        type="password"
-                        value={pin}
-                        onChange={(e) => setPin(e.target.value)}
-                        variant="outlined"
-                        sx={{ width: '200px' }}
-                    />
-                </div>
-            )}
-
+          
             {isUri && <UriDisplay uri={uri} />}
 
 
