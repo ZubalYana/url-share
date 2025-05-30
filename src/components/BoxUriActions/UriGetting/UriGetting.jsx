@@ -61,7 +61,7 @@ const [currentCode, setCurrentCode] = useState('');
             try {
                 const res = await fetch(`http://localhost:5000/api/uri/${code}`);
                 if (res.status === 401) {
-                    
+
                     setCurrentCode(code);
                     setPinRequired(true);
                     toast.info('PIN is required for this code.');
@@ -113,17 +113,21 @@ const handlePinSubmit = async () => {
 };
 
 
-    const handleReset = () => {
-        inputsRef.current.forEach(input => input && (input.value = ''));
-        setUri('');
-        setIsUri(false);
-        setIsProtected(false);
-        setPin('');
-        setCode('');
-        setPrevValues(['', '', '', '', '', '']);
-        inputsRef.current[0]?.focus();
-        toast.success('URI reset!');
-    };
+   const handleReset = () => {
+    inputsRef.current.forEach(input => input && (input.value = ''));
+    setUri('');
+    setIsUri(false);
+    setIsProtected(false);
+    setPin('');
+    setCode('');
+    setPinInput('');
+    setPinRequired(false);
+    setCurrentCode('');
+    setPrevValues(['', '', '', '', '', '']);
+    inputsRef.current[0]?.focus();
+    toast.success('URI reset!');
+};
+
 
     return (
         <div className="uriLogicSection">
