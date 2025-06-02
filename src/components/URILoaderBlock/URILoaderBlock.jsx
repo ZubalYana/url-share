@@ -6,7 +6,7 @@ function FlipCard({ digit }) {
   const [rotation, setRotation] = useState(0);
   const timeoutRef = useRef();
 
-  
+
 
   useEffect(() => {
     if (digit !== displayDigit) {
@@ -89,7 +89,7 @@ export default function FlipCounter() {
 
   const fetchCount = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/downloads/count');
+      const res = await fetch('/api/downloads/count');
       const data = await res.json();
       setCount(data.count || 0);
     } catch (error) {
@@ -104,14 +104,14 @@ export default function FlipCounter() {
       fetchCount();
     }, 3000);
 
-    return () => clearInterval(interval); 
+    return () => clearInterval(interval);
   }, []);
 
   const digits = String(count).padStart(4, '0').split('');
 
   return (
-    <div className='flex flex-col items-center'>
-      <h2 className='text-[32px] font-semibold text-center mb-2'>URI loaded</h2>
+    <div className='flex flex-col items-center mt-10'>
+      <h2 className='text-[24px] font-semibold text-center mb-1 uppercase'>URI loaded</h2>
       <Box
         sx={{
           display: 'flex',

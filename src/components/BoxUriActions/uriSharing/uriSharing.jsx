@@ -1,9 +1,7 @@
 import React, { useState, useRef } from 'react';
-import './UriSharing.css';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
 import UriInput from '../MiniCompUriActions/UriSharingComp/UriInput/UriInput';
 import PinInput from '../MiniCompUriActions/UriSharingComp/PinInput/PinInput';
 import CodeDisplay from '../MiniCompUriActions/UriSharingComp/CodeDisplay/CodeDisplay';
@@ -62,7 +60,7 @@ export default function UriSharing() {
         setIsCode(true);
 
         try {
-            const res = await fetch('http://localhost:5000/api/uri', {
+            const res = await fetch('/api/uri', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ code: generatedCode, uri, pin: usePin ? pinDigits.join('') : null }),
@@ -94,8 +92,8 @@ export default function UriSharing() {
     };
 
     return (
-        <div className="uriLogicSection">
-            <h3 className="uriLogicSection_title">Share your URI</h3>
+        <div className="w-[500px] h-[225px] flex flex-col items-center">
+            <h3 className="uppercase text-2xl font-semibold mb-2">Share your URI</h3>
 
             <UriInput uri={uri} setUri={setUri} />
 
@@ -126,4 +124,5 @@ export default function UriSharing() {
             <ToastContainer position="top-right" autoClose={3000} />
         </div>
     );
+
 }

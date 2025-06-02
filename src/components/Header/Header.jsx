@@ -11,8 +11,8 @@ export default function Header() {
 
 
       <div className='w-[50%]'>
-        <h1 className='text-[40px] font-semibold text-center'>URI-SHARE</h1>
-        <p className='text-center text-[20px] font-regular'>A simple <span className='text-[#1E47DA] cursor-pointer'> solution </span>  to a common problem — <span className='text-[#1E47DA] cursor-pointer'>easily</span> share URLs <br /> and links across devices instantly.</p>
+        <h1 className='text-[38px] font-semibold text-center'>URI-SHARE</h1>
+        <p className='text-center text-[18px] font-regular'>A simple <span className='text-[#1E47DA] cursor-pointer'> solution </span>  to a common problem — <span className='text-[#1E47DA] cursor-pointer'>easily</span> share URLs <br /> and links across devices instantly.</p>
       </div>
 
       <div className='w-[25%] flex justify-center gap-[10px]'>

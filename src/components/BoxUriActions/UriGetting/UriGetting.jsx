@@ -1,5 +1,4 @@
 import React, { useRef, useState } from 'react';
-import './UriGetting.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CodeInput from '../MiniCompUriActions/UriGettingComp/CodeInput/CodeInput';
@@ -7,7 +6,7 @@ import UriDisplay from '../MiniCompUriActions/UriGettingComp/UriDisplay/UriDispl
 import ActionButtons from '../MiniCompUriActions/UriGettingComp/ActionButtons/ActionButtons';
 import PinUnlock from '../MiniCompUriActions/UriGettingComp/PinUnlock/PinUnlock';
 
-export default function UriGetting() {
+const UriGetting = () => {
     const inputsRef = useRef([]);
     const [uri, setUri] = useState('');
     const [isUri, setIsUri] = useState(false);
@@ -16,8 +15,8 @@ export default function UriGetting() {
     const [code, setCode] = useState('');
 
     const [pinRequired, setPinRequired] = useState(false);
-const [pinInput, setPinInput] = useState('');
-const [currentCode, setCurrentCode] = useState('');
+    const [pinInput, setPinInput] = useState('');
+    const [currentCode, setCurrentCode] = useState('');
 
 
     const handleChange = (e, index) => {
@@ -53,83 +52,83 @@ const [currentCode, setCurrentCode] = useState('');
         e.preventDefault();
     };
 
-   const handleButtonClick = async () => {
-    if (!isUri) {
-        const code = inputsRef.current.map(input => input.value).join('');
-        if (code.length === 6) {
-            try {
-                const res = await fetch(`http://localhost:5000/api/uri/${code}`);
-                if (res.status === 401) {
+    const handleButtonClick = async () => {
+        if (!isUri) {
+            const code = inputsRef.current.map(input => input.value).join('');
+            if (code.length === 6) {
+                try {
+                    const res = await fetch(`/api/uri/${code}`);
+                    if (res.status === 401) {
 
-                    setCurrentCode(code);
-                    setPinRequired(true);
-                    toast.info('PIN is required for this code.');
-                    return;
+                        setCurrentCode(code);
+                        setPinRequired(true);
+                        toast.info('PIN is required for this code.');
+                        return;
+                    }
+                    if (!res.ok) throw new Error('Code not found');
+                    const data = await res.json();
+                    setUri(data.uri);
+                    setIsUri(true);
+                    toast.success('URI found!');
+                } catch (err) {
+                    toast.error(err.message);
                 }
-                if (!res.ok) throw new Error('Code not found');
-                const data = await res.json();
-                setUri(data.uri);
-                setIsUri(true);
-                toast.success('URI found!');
-            } catch (err) {
-                toast.error(err.message);
+            } else {
+                toast.error('Please enter 6 characters');
             }
         } else {
-            toast.error('Please enter 6 characters');
+            try {
+                await navigator.clipboard.writeText(uri);
+                toast.success('URI copied to clipboard!');
+            } catch {
+                toast.error('Failed to copy URI!');
+            }
         }
-    } else {
+    };
+
+
+    const handlePinSubmit = async () => {
         try {
-            await navigator.clipboard.writeText(uri);
-            toast.success('URI copied to clipboard!');
-        } catch {
-            toast.error('Failed to copy URI!');
-        }
-    }
-};
+            const res = await fetch(`/api/uri/${currentCode}/unlock`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pin: pinInput })
+            });
 
+            if (!res.ok) {
+                const data = await res.json();
+                throw new Error(data.message);
+            }
 
-const handlePinSubmit = async () => {
-    try {
-        const res = await fetch(`http://localhost:5000/api/uri/${currentCode}/unlock`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ pin: pinInput })
-        });
-
-        if (!res.ok) {
             const data = await res.json();
-            throw new Error(data.message);
+            setUri(data.uri);
+            setIsUri(true);
+            setPinRequired(false);
+            toast.success('PIN accepted. URI unlocked!');
+        } catch (err) {
+            toast.error(err.message);
         }
+    };
 
-        const data = await res.json();
-        setUri(data.uri);
-        setIsUri(true);
+
+    const handleReset = () => {
+        inputsRef.current.forEach(input => input && (input.value = ''));
+        setUri('');
+        setIsUri(false);
+        setPin('');
+        setCode('');
+        setPinInput('');
         setPinRequired(false);
-        toast.success('PIN accepted. URI unlocked!');
-    } catch (err) {
-        toast.error(err.message);
-    }
-};
-
-
-   const handleReset = () => {
-    inputsRef.current.forEach(input => input && (input.value = ''));
-    setUri('');
-    setIsUri(false);
-    setPin('');
-    setCode('');
-    setPinInput('');
-    setPinRequired(false);
-    setCurrentCode('');
-    setPrevValues(['', '', '', '', '', '']);
-    inputsRef.current[0]?.focus();
-    toast.success('URI reset!');
-};
+        setCurrentCode('');
+        setPrevValues(['', '', '', '', '', '']);
+        inputsRef.current[0]?.focus();
+        toast.success('URI reset!');
+    };
 
 
     return (
-        <div className="uriLogicSection">
-            <h3 className="uriLogicSection_title">Get a URI</h3>
+        <div className="w-[500px] h-[225px] flex flex-col items-center">
+            <h3 className="uppercase text-2xl font-semibold mb-2">Get a URI</h3>
             <CodeInput
                 inputsRef={inputsRef}
                 handleChange={handleChange}
@@ -137,19 +136,15 @@ const handlePinSubmit = async () => {
                 handlePaste={handlePaste}
             />
 
-          
             {isUri && <UriDisplay uri={uri} />}
 
-
-
-{pinRequired && (
-    <PinUnlock
-        pinInput={pinInput}
-        setPinInput={setPinInput}
-        handlePinSubmit={handlePinSubmit}
-    />
-)}
-
+            {pinRequired && (
+                <PinUnlock
+                    pinInput={pinInput}
+                    setPinInput={setPinInput}
+                    handlePinSubmit={handlePinSubmit}
+                />
+            )}
 
             <ActionButtons
                 isUri={isUri}
@@ -171,4 +166,7 @@ const handlePinSubmit = async () => {
             />
         </div>
     );
+
 }
+
+export default UriGetting;
