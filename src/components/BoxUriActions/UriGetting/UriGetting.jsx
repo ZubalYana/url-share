@@ -127,8 +127,8 @@ const UriGetting = () => {
 
 
     return (
-        <div className="w-[100%] flex flex-col items-center md:w-[500px] md:h-[225px]">
-            <h3 className="uppercase text-2xl font-semibold mb-2 text-[#1c1c1c]">Get a URI</h3>
+        <div className="w-[100%] flex flex-col items-center p-4 md:w-[500px] md:h-[225px] md:p-0">
+            <h2 className='text-[18px] font-semibold text-center mb-1 uppercase md:text-[24px] text-[#1c1c1c]'>Get a URI</h2>
             <CodeInput
                 inputsRef={inputsRef}
                 handleChange={handleChange}

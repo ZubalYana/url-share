@@ -12,9 +12,10 @@ export default function CodeInput({ inputsRef, handleChange, handleKeyDown, hand
                         maxLength: 1,
                         style: {
                             textAlign: 'center',
-                            fontSize: '24px',
-                            width: '40px',
-                            maxHeight: '56px',
+                            fontSize: { xs: '14px', sm: '24px' },
+                            width: { xs: '35px', sm: '40px' },
+                            height: { xs: '35px', sm: '56px' },
+                            maxHeight: { xs: '35px', sm: '56px' },
                             fontFamily: 'fredoka',
                         },
                     }}

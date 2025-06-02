@@ -4,7 +4,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: Fredoka;
+  font-family: Fredoka;
 }
 
 label,
@@ -15,9 +15,16 @@ button,
 select,
 a,
 li {
-    font-family: MuseoModerno;
+  font-family: MuseoModerno;
 }
 
+
 body {
-  overflow: hidden;
+  overflow-y: auto;
+}
+
+@media (min-width: 768px) {
+  body {
+    overflow: hidden;
+  }
 }

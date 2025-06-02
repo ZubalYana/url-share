@@ -10,6 +10,7 @@ export default function UriInput({ uri, setUri }) {
             onChange={(e) => setUri(e.target.value)}
             fullWidth
             sx={{
+                width: '100%',
                 backgroundColor: '#f9f9f9',
                 borderRadius: '8px',
                 '& .MuiOutlinedInput-root': {
@@ -18,7 +19,7 @@ export default function UriInput({ uri, setUri }) {
                     '&.Mui-focused fieldset': { borderColor: '#673ab7' },
                 },
                 '& .MuiInputLabel-root': {
-                    fontSize: '16px',
+                    fontSize: { xs: '14px', sm: '16px' },
                     fontFamily: 'MuseoModerno',
                 },
             }}

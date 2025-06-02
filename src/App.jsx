@@ -7,14 +7,14 @@ function App() {
 
 
 
-    // git merge main в гілці щоб працював tailwind в інших гілках 
+  // git merge main в гілці щоб працював tailwind в інших гілках 
 
   return (
     <>
 
       <Header />
 
-         <URILoaderBlock  />
+      <URILoaderBlock />
 
       <UriActions />
 
