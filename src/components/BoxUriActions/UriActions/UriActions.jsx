@@ -1,10 +1,9 @@
 import React from 'react'
-import './UriActions.css'
 import UriSharing from '../uriSharing/uriSharing'
 import UriGetting from '../UriGetting/UriGetting'
 export default function UriActions() {
     return (
-        <div className='uriActions'>
+        <div className='uriActions w-full flex flex-col justify-center items-center gap-[120px] md:flex-row'>
             <UriSharing />
             <UriGetting />
         </div>

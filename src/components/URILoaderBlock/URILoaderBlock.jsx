@@ -110,8 +110,8 @@ export default function FlipCounter() {
   const digits = String(count).padStart(4, '0').split('');
 
   return (
-    <div className='flex flex-col items-center mt-10'>
-      <h2 className='text-[24px] font-semibold text-center mb-1 uppercase'>URI loaded</h2>
+    <div className='flex flex-col items-center mt-3 md:mt-10'>
+      <h2 className='text-[18px] font-semibold text-center mb-1 uppercase md:text-[24px] text-[#1c1c1c]'>URI loaded</h2>
       <Box
         sx={{
           display: 'flex',

@@ -93,8 +93,8 @@ export default function UriSharing() {
     };
 
     return (
-        <div className="w-[500px] h-[225px] flex flex-col items-center">
-            <h3 className="uppercase text-2xl font-semibold mb-2">Share your URI</h3>
+        <div className="w-[100%] flex flex-col items-center md:w-[500px] md:h-[225px]">
+            <h3 className="uppercase text-2xl font-semibold mb-2 text-[#1c1c1c]">Share your URI</h3>
 
             <UriInput uri={uri} setUri={setUri} />
 
