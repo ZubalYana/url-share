@@ -12,7 +12,6 @@ export default function UriInput({ uri, setUri }) {
             sx={{
                 backgroundColor: '#f9f9f9',
                 borderRadius: '8px',
-                marginBottom: '20px',
                 '& .MuiOutlinedInput-root': {
                     '& fieldset': { borderColor: '#aaa' },
                     '&:hover fieldset': { borderColor: '#888' },

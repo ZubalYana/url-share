@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+
 import UriInput from '../MiniCompUriActions/UriSharingComp/UriInput/UriInput';
 import PinInput from '../MiniCompUriActions/UriSharingComp/PinInput/PinInput';
 import CodeDisplay from '../MiniCompUriActions/UriSharingComp/CodeDisplay/CodeDisplay';
@@ -97,10 +98,13 @@ export default function UriSharing() {
 
             <UriInput uri={uri} setUri={setUri} />
 
-            <FormControlLabel
-                control={<Checkbox checked={usePin} onChange={(e) => setUsePin(e.target.checked)} color="primary" />}
-                label="Protect with PIN-code"
-            />
+            {uri.trim() && (
+                <FormControlLabel
+                    control={<Checkbox checked={usePin} onChange={(e) => setUsePin(e.target.checked)} color="primary" />}
+                    label="Protect with PIN-code"
+                    className='mt-[20px]'
+                />
+            )}
 
             {usePin && (
                 <PinInput
@@ -113,7 +117,7 @@ export default function UriSharing() {
                 />
             )}
 
-            {isCode && <CodeDisplay code={code} />}
+            {isCode && (!usePin || pinDigits.every(d => d !== '')) && <CodeDisplay code={code} />}
 
             <ActionButtons
                 isCode={isCode}
@@ -124,5 +128,6 @@ export default function UriSharing() {
             <ToastContainer position="top-right" autoClose={3000} />
         </div>
     );
+
 
 }
