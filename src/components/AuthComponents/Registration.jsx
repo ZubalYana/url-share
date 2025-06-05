@@ -1,39 +1,115 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { TextField, Button } from '@mui/material'
 import axios from 'axios'
+
 export default function Registration() {
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        password: '',
+        confirmPassword: ''
+    })
+
+    const [errors, setErrors] = useState({})
+
+    const validate = () => {
+        const newErrors = {}
+
+        if (formData.name.trim().length < 3) {
+            newErrors.name = 'Name must be at least 3 characters'
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(formData.email)) {
+            newErrors.email = 'Enter a valid email'
+        }
+
+        if (formData.password.length < 8 || formData.password.length > 16) {
+            newErrors.password = 'Password must be between 8 and 16 characters'
+        }
+
+        if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = 'Passwords do not match'
+        }
+
+        setErrors(newErrors)
+        return Object.keys(newErrors).length === 0
+    }
+
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        })
+    }
+
+    const handleSubmit = async () => {
+        if (!validate()) return
+
+        try {
+            const response = await axios.post('/api/register', formData)
+            console.log('User registered:', response.data)
+        } catch (error) {
+            console.error('Registration error:', error)
+        }
+    }
+
     return (
-        <div className='bg-white shadow-xl rounded-xl hover:shadow-2xl p-4 flex flex-col items-center lg:w-[400px] lg:h-[500px] lg:p-6'>
+    <div className='bg-white shadow-xl rounded-xl hover:shadow-2xl p-4 flex flex-col items-center lg:w-[400px] lg:min-h-[500px] lg:p-6'>
+
             <h2 className='text-[18px] font-semibold text-center mb-3 uppercase md:text-[24px] text-[#1c1c1c]'>Sign Up</h2>
             <div className='flex flex-col w-full gap-4'>
                 <TextField
                     id='name'
+                    name='name'
                     label='Your name'
                     variant="outlined"
                     className='w-full'
+                    value={formData.name}
+                    onChange={handleChange}
+                    error={!!errors.name}
+                    helperText={errors.name}
                 />
                 <TextField
-                    id='Your email'
+                    id='email'
+                    name='email'
                     label='Email'
                     variant="outlined"
                     className='w-full'
+                    value={formData.email}
+                    onChange={handleChange}
+                    error={!!errors.email}
+                    helperText={errors.email}
                 />
                 <TextField
-                    id='Password'
+                    id='password'
+                    name='password'
                     label='Create a unique password'
+                    type="password"
                     variant="outlined"
                     className='w-full'
+                    value={formData.password}
+                    onChange={handleChange}
+                    error={!!errors.password}
+                    helperText={errors.password}
                 />
                 <TextField
-                    id='PasswordRepeted'
+                    id='confirmPassword'
+                    name='confirmPassword'
                     label='Repeat your password'
+                    type="password"
                     variant="outlined"
                     className='w-full'
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    error={!!errors.confirmPassword}
+                    helperText={errors.confirmPassword}
                 />
             </div>
             <Button
                 type="button"
                 variant="contained"
+                onClick={handleSubmit}
                 sx={{
                     mt: { xs: 2, md: 4 },
                     px: 5,
@@ -45,7 +121,6 @@ export default function Registration() {
                     fontSize: '16px',
                     textTransform: 'none',
                     boxShadow: '0px 4px 10px rgba(0,0,0,0.1)',
-
                 }}
             >
                 Create an account
