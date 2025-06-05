@@ -1,26 +1,13 @@
 import './App.css'
-import Header from './components/Header/Header'
-import UriActions from './components/BoxUriActions/UriActions/UriActions'
-import Decorations from './components/Decorations/Decorations'
-import URILoaderBlock from './components/URILoaderBlock/URILoaderBlock'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import MainPage from './components/MainPage/MainPage'
 function App() {
-
-
-
-  // git merge main в гілці щоб працював tailwind в інших гілках 
-
   return (
-    <>
-
-      <Header />
-
-      <URILoaderBlock />
-
-      <UriActions />
-
-      <Decorations />
-
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<MainPage />}></Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
