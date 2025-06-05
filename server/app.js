@@ -3,9 +3,12 @@ const app = express();
 const cors = require('cors');
 const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 const PORT = process.env.PORT || 5000;
 const UriEntry = require('./models/UriEntry');
 const DownloadCounter = require('./models/DownloadCounter');
+const User = require('./models/User')
 
 app.use(cors());
 app.use(express.json());

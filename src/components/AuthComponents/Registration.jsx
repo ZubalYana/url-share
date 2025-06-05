@@ -1,5 +1,6 @@
 import React from 'react'
 import { TextField, Button } from '@mui/material'
+import axios from 'axios'
 export default function Registration() {
     return (
         <div className='bg-white shadow-xl rounded-xl hover:shadow-2xl p-4 flex flex-col items-center lg:w-[400px] lg:h-[500px] lg:p-6'>
