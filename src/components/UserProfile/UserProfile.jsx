@@ -9,6 +9,12 @@ Modal.setAppElement('#root');
 export default function UserProfileModal({ isOpen, onRequestClose }) {
     const user = JSON.parse(localStorage.getItem('user'));
 
+     const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        onRequestClose(); 
+    };
+
     return (
         <Modal
             isOpen={isOpen}
@@ -26,6 +32,7 @@ export default function UserProfileModal({ isOpen, onRequestClose }) {
 
                     <div className="w-full flex flex-col md:flex-row justify-between gap-4 mt-4">
                         <Button
+                            onClick={handleLogout}
                             variant="outlined"
                             fullWidth
                             sx={{
