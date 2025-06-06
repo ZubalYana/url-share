@@ -139,6 +139,38 @@ app.post('/api/login', async (req, res) => {
 
 
 
+app.put('/api/user/update', async (req, res) => {
+    const token = req.headers.authorization?.split(' ')[1];
+
+    if (!token) return res.status(401).json({ message: 'Not authorized' });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id);
+
+        const { name, currentPassword, newPassword } = req.body;
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.status(403).json({ message: 'Current password is incorrect' });
+        }
+
+        if (name) user.name = name;
+        if (newPassword && newPassword.length >= 8) {
+            user.password = await bcrypt.hash(newPassword, 10);
+        }
+
+        await user.save();
+
+        res.json({ user: { name: user.name, email: user.email } });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

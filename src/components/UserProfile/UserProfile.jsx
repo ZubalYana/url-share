@@ -1,13 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Modal from 'react-modal';
 import { Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CreateIcon from '@mui/icons-material/Create';
+import EditProfileModal from '../EditProfileModal/EditProfileModal';
 
 Modal.setAppElement('#root');
 
 export default function UserProfileModal({ isOpen, onRequestClose }) {
     const user = JSON.parse(localStorage.getItem('user'));
+    const [editModalOpen, setEditModalOpen] = useState(false);
+
+
 
      const handleLogout = () => {
         localStorage.removeItem('token');
@@ -60,6 +64,7 @@ export default function UserProfileModal({ isOpen, onRequestClose }) {
                         </Button>
 
                         <Button
+                        onClick={() => setEditModalOpen(true)}
                             variant="outlined"
                             fullWidth
                             sx={{
@@ -88,6 +93,8 @@ export default function UserProfileModal({ isOpen, onRequestClose }) {
                     </div>
                 </div>
             </div>
+            <EditProfileModal isOpen={editModalOpen} onRequestClose={() => setEditModalOpen(false)} />
         </Modal>
+        
     );
 }
