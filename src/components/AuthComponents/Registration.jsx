@@ -3,6 +3,7 @@ import { TextField, Button } from '@mui/material'
 import axios from 'axios'
 import { IconButton, InputAdornment } from '@mui/material'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom';
 
 export default function Registration() {
     const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ export default function Registration() {
     const [errors, setErrors] = useState({})
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const navigate = useNavigate();
 
     const validate = () => {
         const newErrors = {}
@@ -49,15 +51,21 @@ export default function Registration() {
     }
 
     const handleSubmit = async () => {
-        if (!validate()) return
+        if (!validate()) return;
 
         try {
-            const response = await axios.post('/api/register', formData)
-            console.log('User registered:', response.data)
+            const response = await axios.post('/api/register', formData);
+            console.log('Full response:', response.data);
+            const { token, user } = response.data;
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user));
+            console.log('User registered and logged in:', user);
+            navigate('/');
         } catch (error) {
-            console.error('Registration error:', error)
+            console.error('Registration error:', error);
         }
-    }
+    };
+
 
     const isFormIncomplete = Object.values(formData).some(value => value.trim() === '')
 

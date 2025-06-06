@@ -92,15 +92,20 @@ app.get('/api/downloads/count', async (req, res) => {
 
 app.post('/api/register', async (req, res) => {
   try {
-    const { name, email, password } = req.body
+    const { name, email, password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = await User.create({ name, email, password: hashedPassword })
-    res.status(201).json({ user })
+    const user = await User.create({ name, email, password: hashedPassword });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '1d',
+    });
+
+    res.status(201).json({ user: { name: user.name, email: user.email }, token });
   } catch (err) {
-    res.status(500).json(err.message)
-    console.log(err)
+    console.error(err);
+    res.status(500).json({ message: err.message });
   }
-})
+});
+
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
