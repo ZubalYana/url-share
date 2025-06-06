@@ -4,7 +4,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-export default function Login() {
+export default function Login({ switchToRegister }) {
     const [showPassword, setShowPassword] = useState(false)
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -95,7 +95,12 @@ export default function Login() {
                 {loading ? 'Logging in...' : 'Log in'}
             </Button>
 
-            <p className="text-[14px] mt-5 cursor-pointer">Don't have an account yet?</p>
+            <p
+                onClick={switchToRegister}
+                className="text-[14px] mt-5 cursor-pointer hover:scale-105 transition-all duration-300"
+            >
+                Don't have an account yet?
+            </p>
         </div>
     )
 }

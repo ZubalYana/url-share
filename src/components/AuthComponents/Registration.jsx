@@ -5,7 +5,7 @@ import { IconButton, InputAdornment } from '@mui/material'
 import { Visibility, VisibilityOff } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom';
 
-export default function Registration() {
+export default function Registration({ switchToLogin }) {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -163,7 +163,12 @@ export default function Registration() {
                 Create an account
             </Button>
 
-            <p className='text-[14px] mt-5 cursor-pointer'>Already have an account?</p>
+            <p
+                onClick={switchToLogin}
+                className="text-[14px] mt-5 cursor-pointer hover:scale-105 transition-all duration-300"
+            >
+                Already have an account?
+            </p>
         </div>
     )
 }
