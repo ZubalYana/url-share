@@ -22,19 +22,13 @@ export default function EditProfileModal({ isOpen, onRequestClose }) {
 const validate = () => {
   const newErrors = {};
 
-  // Ім'я - не обов'язково змінювати, але якщо воно є, то мінімум 3 символи
   if (!formData.name || formData.name.trim().length < 3) {
     newErrors.name = 'Name must be at least 3 characters';
   }
-  // Припиняємо блокувати, якщо ім'я не змінилось
-  // видалено: else if (formData.name.trim() === currentUser.name.trim()) {...}
-
-  // Поточний пароль обов’язковий завжди (для підтвердження)
   if (!formData.currentPassword.trim()) {
     newErrors.currentPassword = 'Please enter current password';
   }
 
-  // Новий пароль (опціонально)
   if (formData.newPassword || formData.confirmPassword) {
     if (!/^(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,16}$/.test(formData.newPassword)) {
       newErrors.newPassword = 'Password must be 8–16 chars, include uppercase letter and special symbol';
@@ -52,17 +46,14 @@ const handleSubmit = async () => {
   if (!validate()) return;
 
   try {
-    // Формуємо об'єкт для запиту тільки з тими полями, які потрібно змінити
     const updateData = {
       currentPassword: formData.currentPassword.trim(),
     };
 
-    // Якщо ім'я змінилось - додаємо його в запит
     if (formData.name.trim() !== currentUser.name.trim()) {
       updateData.name = formData.name.trim();
     }
 
-    // Якщо заданий новий пароль - додаємо його в запит
     if (formData.newPassword) {
       updateData.newPassword = formData.newPassword;
     }
