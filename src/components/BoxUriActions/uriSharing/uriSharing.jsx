@@ -15,6 +15,7 @@ export default function UriSharing() {
     const [usePin, setUsePin] = useState(false);
     const [pinDigits, setPinDigits] = useState(Array(4).fill(''));
     const inputsRef = useRef([]);
+    const token = localStorage.getItem('token');
 
     const isValidUri = (string) => {
         try {
@@ -63,8 +64,10 @@ export default function UriSharing() {
         try {
             const res = await fetch('/api/uri', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: generatedCode, uri, pin: usePin ? pinDigits.join('') : null }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }, body: JSON.stringify({ code: generatedCode, uri, pin: usePin ? pinDigits.join('') : null }),
             });
             if (!res.ok) throw new Error('Failed to store URI');
             toast.success('Code generated and stored!');

@@ -9,6 +9,8 @@ const PORT = process.env.PORT || 5000;
 const UriEntry = require('./models/UriEntry');
 const DownloadCounter = require('./models/DownloadCounter');
 const User = require('./models/User')
+const optionalAuth = require('./optionalAuth');
+const validator = require('validator');
 
 app.use(cors());
 app.use(express.json());
@@ -20,12 +22,23 @@ mongoose.connect(process.env.MONGODB_URL)
     console.error('Error connecting to MongoDB:', error);
   });
 
-app.post('/api/uri', async (req, res) => {
+app.post('/api/uri', optionalAuth, async (req, res) => {
+  console.log('Authenticated user:', req.user?.email || 'Anonymous');
+
   const { code, uri, pin } = req.body;
   if (!code || !uri) return res.status(400).json({ message: 'Code and URI required.' });
 
+  if (!validator.isURL(uri, { require_protocol: true })) {
+    return res.status(400).json({ message: 'Invalid URI format. Make sure it includes http:// or https://.' });
+  }
   try {
-    await UriEntry.create({ code, uri, pin: pin || null });
+    const newEntry = await UriEntry.create({ code, uri, pin: pin || null });
+    if (req.user) {
+      req.user.URIs.push(newEntry._id);
+      await req.user.save();
+      req.user.markModified('URIs');
+      console.log('Updated URIs:', req.user.URIs);
+    }
 
     await incrementDownloadCount();
     res.status(201).json({ message: 'Entry saved.' });
@@ -33,6 +46,7 @@ app.post('/api/uri', async (req, res) => {
     res.status(500).json({ message: 'Failed to save URI.', error: err.message });
   }
 });
+
 
 app.get('/api/uri/:code', async (req, res) => {
   try {
@@ -140,33 +154,33 @@ app.post('/api/login', async (req, res) => {
 
 
 app.put('/api/user/update', async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1];
+  const token = req.headers.authorization?.split(' ')[1];
 
-    if (!token) return res.status(401).json({ message: 'Not authorized' });
+  if (!token) return res.status(401).json({ message: 'Not authorized' });
 
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = await User.findById(decoded.id);
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.id).populate('URIs');
 
-        const { name, currentPassword, newPassword } = req.body;
+    const { name, currentPassword, newPassword } = req.body;
 
-        const isMatch = await bcrypt.compare(currentPassword, user.password);
-        if (!isMatch) {
-            return res.status(403).json({ message: 'Current password is incorrect' });
-        }
-
-        if (name) user.name = name;
-        if (newPassword && newPassword.length >= 8) {
-            user.password = await bcrypt.hash(newPassword, 10);
-        }
-
-        await user.save();
-
-        res.json({ user: { name: user.name, email: user.email } });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: 'Server error' });
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(403).json({ message: 'Current password is incorrect' });
     }
+
+    if (name) user.name = name;
+    if (newPassword && newPassword.length >= 8) {
+      user.password = await bcrypt.hash(newPassword, 10);
+    }
+
+    await user.save();
+
+    res.json({ user: { name: user.name, email: user.email } });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 });
 
 

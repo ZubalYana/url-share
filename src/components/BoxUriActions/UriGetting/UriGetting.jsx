@@ -13,6 +13,7 @@ const UriGetting = () => {
     const [prevValues, setPrevValues] = useState(['', '', '', '', '', '']);
     const [pin, setPin] = useState('');
     const [code, setCode] = useState('');
+    const token = localStorage.getItem('token');
 
     const [pinRequired, setPinRequired] = useState(false);
     const [pinInput, setPinInput] = useState('');
@@ -91,8 +92,10 @@ const UriGetting = () => {
         try {
             const res = await fetch(`/api/uri/${currentCode}/unlock`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pin: pinInput })
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }, body: JSON.stringify({ pin: pinInput })
             });
 
             if (!res.ok) {
