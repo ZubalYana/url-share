@@ -5,6 +5,7 @@ const dotenv = require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const path = require('path');
 const PORT = process.env.PORT || 5000;
 const UriEntry = require('./models/UriEntry');
 const DownloadCounter = require('./models/DownloadCounter');
@@ -183,7 +184,19 @@ app.put('/api/user/update', async (req, res) => {
   }
 });
 
+app.use(express.static(path.join(__dirname, '..', 'dist'), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    } else if (filePath.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  }
+}));
 
+app.get(/^\/(?!api).*/, (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
+});
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
