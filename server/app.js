@@ -195,6 +195,21 @@ app.put('/api/user/update', async (req, res) => {
   }
 });
 
+
+
+app.get('/api/user/uris', optionalAuth, async (req, res) => {
+  if (!req.user) return res.status(401).json({ message: 'Unauthorized' });
+
+  try {
+    const user = await User.findById(req.user._id).populate('URIs');
+    res.json({ uris: user.URIs });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to fetch user URIs' });
+  }
+});
+
+
 app.use(express.static(path.join(__dirname, '..', 'dist'), {
   setHeaders: (res, filePath) => {
     if (filePath.endsWith('.css')) {
