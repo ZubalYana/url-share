@@ -4,6 +4,7 @@ import { Button } from '@mui/material';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CreateIcon from '@mui/icons-material/Create';
 import EditProfileModal from '../EditProfileModal/EditProfileModal';
+import UrlHistoryModal from '../UrlHistoryModal/UrlHistoryModal';
 
 Modal.setAppElement('#root');
 
@@ -19,6 +20,9 @@ export default function UserProfileModal({ isOpen, onRequestClose }) {
         onRequestClose(); 
     };
 
+
+    const [historyModalOpen, setHistoryModalOpen] = useState(false);
+
     return (
         <Modal
             isOpen={isOpen}
@@ -26,7 +30,7 @@ export default function UserProfileModal({ isOpen, onRequestClose }) {
             className="outline-none"
             overlayClassName="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50"
         >
-            <div className="bg-white shadow-xl rounded-xl p-6 w-[90vw] max-w-md mx-auto">
+            <div className="bg-white shadow-xl rounded-xl p-6 w-[90vw] max-w-lg mx-auto">
                 <h2 className="text-[18px] font-semibold text-center mb-3 uppercase md:text-[24px] text-[#1c1c1c]">
                     Your profile
                 </h2>
@@ -90,9 +94,36 @@ export default function UserProfileModal({ isOpen, onRequestClose }) {
                             <CreateIcon sx={{ fontSize: 18, mr: 1 }} />
                             Edit profile
                         </Button>
+                        
+                    <Button
+   onClick={() => setHistoryModalOpen(true)}
+    variant="outlined"
+    fullWidth
+    sx={{
+        px: 3,
+        py: 1.2,
+        borderRadius: 2,
+        borderColor: '#10b981',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        textTransform: 'none',
+        boxShadow: '0px 4px 10px rgba(0,0,0,0.1)',
+        color: '#10b981',
+        '&:hover': {
+            borderColor: '#059669',
+            color: '#059669',
+            backgroundColor: 'rgba(16, 185, 129, 0.05)',
+        },
+    }}
+>
+    🕘 URL History
+</Button>
+
                     </div>
                 </div>
             </div>
+            <UrlHistoryModal isOpen={historyModalOpen} onClose={() => setHistoryModalOpen(false)} />
+
             <EditProfileModal isOpen={editModalOpen} onRequestClose={() => setEditModalOpen(false)} />
         </Modal>
         
