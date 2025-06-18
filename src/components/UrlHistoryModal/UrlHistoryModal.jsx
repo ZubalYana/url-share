@@ -14,6 +14,9 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { styled } from '@mui/material/styles';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 const GlassBox = styled(Box)(({ theme }) => ({
   background: 'rgba(255, 255, 255, 0.85)',
@@ -42,13 +45,16 @@ export default function UrlHistoryModal({ isOpen, onClose }) {
   const [uris, setUris] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const copyToClipboard = async (text) => {
-    try {
-      await navigator.clipboard.writeText(text);
-    } catch (err) {
-      console.error('Copy failed:', err);
-    }
-  };
+ const copyToClipboard = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    toast.success('Copied to clipboard!');
+  } catch (err) {
+    toast.error('Could not copy.');
+    console.error('Copy failed:', err);
+  }
+};
+
 
   useEffect(() => {
     if (!isOpen) return;
@@ -178,7 +184,9 @@ export default function UrlHistoryModal({ isOpen, onClose }) {
             </HideScroll>
           )}
         </DialogContent>
+        
       </GlassBox>
+        <ToastContainer position="top-right" autoClose={3000} />
     </Dialog>
   );
 }
