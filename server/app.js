@@ -26,14 +26,23 @@ mongoose.connect(process.env.MONGODB_URL)
 app.post('/api/uri', optionalAuth, async (req, res) => {
   console.log('Authenticated user:', req.user?.email || 'Anonymous');
 
-  const { code, uri, pin } = req.body;
-  if (!code || !uri) return res.status(400).json({ message: 'Code and URI required.' });
+  const { uri, pin } = req.body;
+  if (!uri) return res.status(400).json({ message: 'URI required.' });
 
   if (!validator.isURL(uri, { require_protocol: true })) {
     return res.status(400).json({ message: 'Invalid URI format. Make sure it includes http:// or https://.' });
   }
+
+  let generatedCode;
+  let exists;
+  do {
+    generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+    exists = await UriEntry.findOne({ code: generatedCode });
+  } while (exists);
+
   try {
-    const newEntry = await UriEntry.create({ code, uri, pin: pin || null });
+    const newEntry = await UriEntry.create({ code: generatedCode, uri, pin: pin || null });
+
     if (req.user) {
       req.user.URIs.push(newEntry._id);
       await req.user.save();
@@ -42,11 +51,13 @@ app.post('/api/uri', optionalAuth, async (req, res) => {
     }
 
     await incrementDownloadCount();
-    res.status(201).json({ message: 'Entry saved.' });
+
+    res.status(201).json({ message: 'Entry saved.', code: generatedCode });
   } catch (err) {
     res.status(500).json({ message: 'Failed to save URI.', error: err.message });
   }
 });
+
 
 
 app.get('/api/uri/:code', async (req, res) => {

@@ -52,29 +52,35 @@ export default function UriSharing() {
         e.preventDefault();
     };
 
-    const generateCode = async () => {
-        if (!uri.trim()) return toast.error('Please enter a URI before generating a code.');
-        if (!isValidUri(uri.trim())) return toast.error('Invalid URI. Please enter a valid URI (e.g., https://)');
-        if (usePin && pinDigits.some(d => d === '')) return toast.error('PIN-code must be exactly 4 digits.');
+   const generateCode = async () => {
+    if (!uri.trim()) return toast.error('Please enter a URI before generating a code.');
+    if (!isValidUri(uri.trim())) return toast.error('Invalid URI. Please enter a valid URI (e.g., https://)');
+    if (usePin && pinDigits.some(d => d === '')) return toast.error('PIN-code must be exactly 4 digits.');
 
-        const generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
-        setCode(generatedCode);
-        setIsCode(true);
+    try {
+        const res = await fetch('/api/uri', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ uri, pin: usePin ? pinDigits.join('') : null }),
+        });
 
-        try {
-            const res = await fetch('/api/uri', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                }, body: JSON.stringify({ code: generatedCode, uri, pin: usePin ? pinDigits.join('') : null }),
-            });
-            if (!res.ok) throw new Error('Failed to store URI');
-            toast.success('Code generated and stored!');
-        } catch (err) {
-            toast.error(err.message);
+        if (!res.ok) {
+            const errData = await res.json();
+            throw new Error(errData.message || 'Failed to store URI');
         }
-    };
+
+        const data = await res.json();
+        setCode(data.code); 
+        setIsCode(true);
+        toast.success('Code generated and stored!');
+    } catch (err) {
+        toast.error(err.message);
+    }
+};
+
 
     const copyCodeToClipboard = () => {
         navigator.clipboard.writeText(code);
