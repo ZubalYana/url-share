@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Dialog,
-  DialogTitle,
   DialogContent,
   IconButton,
   Typography,
@@ -13,12 +12,13 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { styled } from '@mui/material/styles';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
-const GlassBox = styled(Box)(({ theme }) => ({
+const GlassBox = styled(Box)(() => ({
   background: 'rgba(255, 255, 255, 0.85)',
   borderRadius: '16px',
   padding: '16px',
@@ -33,28 +33,34 @@ const HideScroll = styled(Box)(() => ({
   paddingRight: '4px',
   scrollbarWidth: 'none',
   '&::-webkit-scrollbar': {
-    display: 'none', 
+    display: 'none',
   },
 }));
 
-const truncateText = (text, maxLength = 40) => {
-  return text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
-};
+const truncateText = (text, maxLength = 40) =>
+  text.length > maxLength ? text.slice(0, maxLength) + '...' : text;
 
 export default function UrlHistoryModal({ isOpen, onClose }) {
   const [uris, setUris] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showPinMap, setShowPinMap] = useState({});
 
- const copyToClipboard = async (text) => {
-  try {
-    await navigator.clipboard.writeText(text);
-    toast.success('Copied to clipboard!');
-  } catch (err) {
-    toast.error('Could not copy.');
-    console.error('Copy failed:', err);
-  }
-};
+  const copyToClipboard = async (text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast.success('Copied to clipboard!');
+    } catch (err) {
+      toast.error('Could not copy.');
+      console.error('Copy failed:', err);
+    }
+  };
 
+  const togglePinVisibility = (id) => {
+    setShowPinMap((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -114,7 +120,7 @@ export default function UrlHistoryModal({ isOpen, onClose }) {
             </Box>
           ) : uris.length === 0 ? (
             <Typography align="center" py={4} color="text.secondary">
-             There are no saved URLs
+              There are no saved URLs
             </Typography>
           ) : (
             <HideScroll display="flex" flexDirection="column" gap={2}>
@@ -134,9 +140,7 @@ export default function UrlHistoryModal({ isOpen, onClose }) {
                     }}
                   >
                     <Box display="flex" alignItems="center" gap={1}>
-                      <Typography variant="body2" fontWeight={600}>
-                        URL:
-                      </Typography>
+                      <Typography variant="body2" fontWeight={600}>URL:</Typography>
                       <Tooltip title={uri.uri}>
                         <Link
                           href={uri.uri}
@@ -157,9 +161,7 @@ export default function UrlHistoryModal({ isOpen, onClose }) {
                     </Box>
 
                     <Box display="flex" alignItems="center" gap={1} mt={0.5}>
-                      <Typography variant="body2" fontWeight={600}>
-                        Code:
-                      </Typography>
+                      <Typography variant="body2" fontWeight={600}>Code:</Typography>
                       <Tooltip title={uri.code}>
                         <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
                           {truncateText(uri.code, 20)}
@@ -171,6 +173,38 @@ export default function UrlHistoryModal({ isOpen, onClose }) {
                         </IconButton>
                       </Tooltip>
                     </Box>
+
+                    <Box display="flex" alignItems="center" gap={1} mt={0.5}>
+                      <Typography variant="body2" fontWeight={600}>With PIN:</Typography>
+                      <Typography variant="body2" color={uri.pin ? 'green' : 'gray'}>
+                        {uri.pin ? 'Yes' : 'No'}
+                      </Typography>
+                    </Box>
+
+                    {uri.pin && (
+                      <Box display="flex" alignItems="center" gap={1} mt={0.5}>
+                        <Typography variant="body2" fontWeight={600}>PIN:</Typography>
+                        <Tooltip title={uri.pin}>
+                          <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                            {showPinMap[uri._id] ? uri.pin : '••••'}
+                          </Typography>
+                        </Tooltip>
+                        <Tooltip title={showPinMap[uri._id] ? 'Hide PIN' : 'Show PIN'}>
+                          <IconButton size="small" onClick={() => togglePinVisibility(uri._id)}>
+                            {showPinMap[uri._id] ? (
+                              <VisibilityOffIcon fontSize="small" />
+                            ) : (
+                              <VisibilityIcon fontSize="small" />
+                            )}
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Copy the PIN">
+                          <IconButton size="small" onClick={() => copyToClipboard(uri.pin)}>
+                            <ContentCopyIcon fontSize="small" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    )}
 
                     <Typography variant="caption" color="text.secondary" mt={1} display="block">
                       Created: {created.toLocaleString()}
@@ -184,7 +218,6 @@ export default function UrlHistoryModal({ isOpen, onClose }) {
             </HideScroll>
           )}
         </DialogContent>
-        
       </GlassBox>
     </Dialog>
   );
