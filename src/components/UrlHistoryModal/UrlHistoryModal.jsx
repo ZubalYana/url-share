@@ -186,7 +186,6 @@ export default function UrlHistoryModal({ isOpen, onClose }) {
         </DialogContent>
         
       </GlassBox>
-        <ToastContainer position="top-right" autoClose={3000} />
     </Dialog>
   );
 }

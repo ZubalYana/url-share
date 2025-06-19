@@ -134,7 +134,6 @@ export default function UriSharing() {
                 handleReset={handleReset}
             />
 
-            <ToastContainer position="top-right" autoClose={3000} />
         </div>
     );
 

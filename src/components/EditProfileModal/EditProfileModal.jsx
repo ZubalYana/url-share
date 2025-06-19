@@ -166,7 +166,6 @@ export default function EditProfileModal({ isOpen, onRequestClose }) {
         </div>
       </Modal>
 
-      <ToastContainer position="top-right" autoClose={3000} />
     </>
   );
 }
