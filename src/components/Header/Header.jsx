@@ -8,19 +8,26 @@ export default function Header() {
   const token = localStorage.getItem('token');
   const [modalOpen, setModalOpen] = useState(false);
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    navigate('/auth');
+  };
+
   useEffect(() => {
     if (!token) {
-      setUser({ name: 'Guest' });
+      logout();
       return;
     }
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
-      const currentTime = Math.floor(Date.now() / 1000);
-      const timeLeft = (payload.exp - currentTime) * 1000;
+      const currentTime = Math.floor(Date.now() / 1000); 
+      const timeLeft = (payload.exp - currentTime) * 1000; 
 
       if (timeLeft <= 0) {
-        logout(); 
+        logout();
       } else {
         const timeout = setTimeout(() => {
           logout();
@@ -29,21 +36,15 @@ export default function Header() {
         return () => clearTimeout(timeout);
       }
     } catch (err) {
-      logout(); 
+      logout();
     }
   }, [token]);
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser({ name: 'Guest' });
-  };
-
   const handleAvatarClick = () => {
-    if (user?.name !== 'Guest') {
+    if (user && token) {
       setModalOpen(true);
     } else {
-      alert('You are currently in Guest Mode.');
+      navigate('/auth');
     }
   };
 
@@ -85,9 +86,7 @@ export default function Header() {
         alt="avatar"
       />
 
-      {modalOpen && user?.name !== 'Guest' && (
-        <UserProfileModal isOpen={modalOpen} onRequestClose={() => setModalOpen(false)} />
-      )}
+      {modalOpen && <UserProfileModal isOpen={modalOpen} onRequestClose={() => setModalOpen(false)} />}
     </div>
   );
 }
