@@ -12,14 +12,10 @@ export default function Header() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    navigate('/auth');
   };
 
   useEffect(() => {
-    if (!token) {
-      logout();
-      return;
-    }
+    if (!token) return;
 
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -59,7 +55,7 @@ export default function Header() {
         <p className="text-center text-[12px] font-regular md:text-[16px] lg:text-[18px]">
           A simple{' '}
           <span className="text-[#1E47DA] cursor-pointer">solution</span> to a common problem —{' '}
-          <span className="text-[#1E47DA] cursor-pointer"> easily</span> share URLs and links across
+          <span className="text-[#1E47DA] cursor-pointer">easily</span> share URLs and links across
           devices instantly.
         </p>
       </div>
@@ -71,12 +67,13 @@ export default function Header() {
           src="/avatar.svg"
           alt="avatar"
         />
-        <p
-          className="font-regular text-[#1E1E1E] text-[18px] cursor-pointer"
-          onClick={handleAvatarClick}
-        >
-          {user?.name || 'Guest mode'}
-        </p>
+       <p
+  className="font-regular text-[#1E1E1E] text-[18px] cursor-pointer"
+  onClick={handleAvatarClick}
+>
+  {user?.name || 'Guest mode'}
+</p>
+
       </div>
 
       <img
